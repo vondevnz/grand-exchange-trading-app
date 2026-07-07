@@ -13,9 +13,9 @@ def main():
         "User-Agent": user_agent
     }
     
-    response = requests.get(url, headers = headers)
+    #response = requests.get(url, headers = headers)
 
-    print(response.text)
+    #print(response.text)
 
 
 if __name__ == "__main__":
