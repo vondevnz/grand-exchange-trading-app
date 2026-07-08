@@ -26,17 +26,26 @@ def get_latest_prices():
     }
 
     # Load the original JSON file
-    with open("mappings/items.json", "r", encoding="utf-8") as file:
-        data = json.load(file)
+    with open("mappings/reversedItems.json", "r", encoding="utf-8") as file:
+        ITEM_NAMES = json.load(file)
 
-    item_id = data["Yew sapling"]
-
-    url = f"https://prices.runescape.wiki/api/v1/osrs/latest?id={item_id}"
+    url = f"https://prices.runescape.wiki/api/v1/osrs/latest"
 
     response = requests.get(url, headers = headers)
 
     response.raise_for_status()
 
-    print(response.text)
+    prices = response.json()["data"]
 
-    return response.json()
+    combined = []
+    for item_id, price_data in prices.items():
+        combined.append({
+            "id": item_id,
+            "name": ITEM_NAMES.get(item_id, "Unknown"),
+            "high": price_data.get("high"),
+            "low": price_data.get("low"),
+            "highTime": price_data.get("highTime"),
+            "lowTime": price_data.get("lowTime"),
+        })
+
+    return combined
