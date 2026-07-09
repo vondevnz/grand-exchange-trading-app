@@ -23,7 +23,9 @@ function App() {
             <th>ID</th>
             <th>Name</th>
             <th>High</th>
+            <th>HighTime</th>
             <th>Low</th>
+            <th>LowTime</th>
           </tr>
         </thead>
         <tbody>
@@ -32,7 +34,9 @@ function App() {
               <td>{item.id}</td>
               <td>{item.name}</td>
               <td>{item.high ?? "-"}</td>
+              <td>{item.highTime ?? "-"}</td>
               <td>{item.low ?? "-"}</td>
+              <td>{item.lowTime ?? "-"}</td>
             </tr>
           ))}
         </tbody>

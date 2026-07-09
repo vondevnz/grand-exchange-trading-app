@@ -4,6 +4,8 @@ import requests
 import json
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from datetime import datetime
+
 
 load_dotenv()
 USER_AGENT = os.getenv("USER_AGENT_TEXT")
@@ -26,7 +28,7 @@ def get_latest_prices():
     }
 
     # Load the original JSON file
-    with open("mappings/reversedItems.json", "r", encoding="utf-8") as file:
+    with open("../mappings/reversedItems.json", "r", encoding="utf-8") as file:
         ITEM_NAMES = json.load(file)
 
     url = f"https://prices.runescape.wiki/api/v1/osrs/latest"
