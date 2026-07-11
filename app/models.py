@@ -2,7 +2,6 @@ from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
 from app.database import Base
 import uuid
-from datetime import datetime
 
 # Table Schema for items + item_time_stamp
 
@@ -27,6 +26,6 @@ class ItemTimeStamps(Base):
 	avg_high_price = Column(Integer)
 	avg_low_price = Column(Integer)
 	high_price_volume = Column(Integer)
-	high_price_volume = Column(Integer)
-	item_id = Column(Integer, ForeignKey("item_id"), nullable = False)
+	low_price_volume = Column(Integer)
+	item_id = Column(Integer, ForeignKey("items.item_id"), nullable = False)
 

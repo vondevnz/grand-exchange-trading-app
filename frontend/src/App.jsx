@@ -29,16 +29,11 @@ function App() {
           </tr>
         </thead>
         <tbody>
-          {prices.map((item) => (
-            <tr key={item.id}>
-              <td>{item.id}</td>
-              <td>{item.name}</td>
-              <td>{item.high ?? "-"}</td>
-              <td>{item.highTime ?? "-"}</td>
-              <td>{item.low ?? "-"}</td>
-              <td>{item.lowTime ?? "-"}</td>
+            <tr>
+              <td>{prices}</td>
+
             </tr>
-          ))}
+          
         </tbody>
       </table>
     </div>
