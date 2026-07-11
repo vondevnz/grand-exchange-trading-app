@@ -3,8 +3,6 @@ from sqlalchemy.dialects.postgresql import UUID
 from app.database import Base
 import uuid
 
-# Table Schema for items + item_time_stamp
-
 # creates sql items table for Items (inherits Base)
 class Items(Base):
 	__tablename__ = "items"

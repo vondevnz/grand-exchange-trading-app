@@ -2,7 +2,7 @@ from dotenv import load_dotenv
 import os
 import requests
 import json
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from datetime import datetime
 
@@ -19,20 +19,26 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Load the original JSON file
+with open("mappings/reversedItems.json", "r", encoding="utf-8") as file:
+    ITEM_NAMES = json.load(file)
+
 
 @app.get("/api/prices/latest")
 def get_latest_prices():
     headers = {
         "User-Agent": USER_AGENT
     }
-    return {"message": "Hellow World"}
+
+    item_id = "4151"
+
+    return { item_id: ITEM_NAMES[item_id] }
+
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Item file not found")
 
     
-    # Load the original JSON file
-    #with open("../mappings/reversedItems.json", "r", encoding="utf-8") as file:
-    #    ITEM_NAMES = json.load(file)
 
-    #url = f"https://prices.runescape.wiki/api/v1/osrs/latest"
+    # url = f"https://prices.runescape.wiki/api/v1/osrs/latest"
     '''
     response = requests.get(url, headers = headers)
 

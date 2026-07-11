@@ -3,7 +3,7 @@
 ## Backend (FastAPI)
 cd project-root   
 uv sync   
-uv run fastapi dev main.py    
+uv run fastapi dev app/main.py    
 
 ## Frontend (React + Vite)
 cd frontend    

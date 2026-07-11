@@ -17,25 +17,7 @@ function App() {
   return (
     <div>
       <h1>OSRS Grand Exchange Prices</h1>
-      <table>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>High</th>
-            <th>HighTime</th>
-            <th>Low</th>
-            <th>LowTime</th>
-          </tr>
-        </thead>
-        <tbody>
-            <tr>
-              <td>{prices}</td>
-
-            </tr>
-          
-        </tbody>
-      </table>
+      <pre>{JSON.stringify(prices, null, 2)}</pre>
     </div>
   );
 }
