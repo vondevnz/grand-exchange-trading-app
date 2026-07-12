@@ -2,6 +2,7 @@ from pydantic import BaseModel, ConfigDict, Field, UUID4
 from typing import Optional
 from datetime import datetime
 
+# Even though the Optional[str] works I should create default values eg. = None
 class ItemsSchema(BaseModel):
 
 	model_config = ConfigDict(from_attributes=True)
