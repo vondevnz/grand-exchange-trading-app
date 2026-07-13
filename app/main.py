@@ -4,6 +4,7 @@ import json
 from fastapi import FastAPI, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
+from sqlalchemy.dialects.postgresql import insert
 from fastapi.middleware.cors import CORSMiddleware
 from datetime import datetime
 from app.database import get_db, Base, engine
@@ -28,27 +29,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-dummy_items = [
-    {
-        "item_id": 4151,
-        "name": "Abyssal whip",
-        "item_image": "https://oldschool.runescape.wiki/images/Abyssal_whip.png",
-        "instabuy": 2750000,
-        "instasell": 2700000,
-        "last_instabuy_time": "2026-07-11T14:32:00",
-        "last_instasell_time": "2026-07-11T14:30:00",
-    },
-    {
-        "item_id": 11840,
-        "name": "Dragon claws",
-        "item_image": "https://oldschool.runescape.wiki/images/Dragon_claws.png",
-        "instabuy": 84500000,
-        "instasell": 83200000,
-        "last_instabuy_time": "2026-07-11T14:28:00",
-        "last_instasell_time": "2026-07-11T14:25:00",
-    },
-]
-
 # Load the original JSON file
 # with open("mappings/reversedItems.json", "r", encoding="utf-8") as file:
     # ITEM_NAMES = json.load(file)
@@ -58,7 +38,7 @@ async def create_tables():
     # Create all database tables defined in models if they don't exist
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
-    print("✅ Database tables successfully created")
+    print("Database tables successfully created")
 
 
 @app.get("/api/prices/latest", response_model=list[ItemsSchema])
@@ -73,6 +53,3 @@ def get_item(item_id: int):
         if item.get("item_id") == item_id:
             return item
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Item not found")
-
-
-
