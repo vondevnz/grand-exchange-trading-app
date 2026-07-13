@@ -12,15 +12,15 @@ class Items(Base):
 	item_image = Column(String(200))
 	instabuy = Column(Integer)
 	instasell = Column(Integer)
-	last_instabuy_time = Column(DateTime)
-	last_instasell_time = Column(DateTime)
+	last_instabuy_time = Column(DateTime(timezone=True))
+	last_instasell_time = Column(DateTime(timezone=True))
 
 # creates sql items table for Items (inherits Base)
 class ItemTimeStamps(Base):
 	__tablename__ = "item_time_stamp"
 
 	id = Column(UUID(as_uuid = True), primary_key = True, default = uuid.uuid4)
-	timestamp = Column(DateTime)
+	timestamp = Column(DateTime(timezone=True))
 	avg_high_price = Column(Integer)
 	avg_low_price = Column(Integer)
 	high_price_volume = Column(Integer)

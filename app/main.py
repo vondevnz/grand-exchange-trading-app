@@ -4,7 +4,6 @@ import json
 from fastapi import FastAPI, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
-from sqlalchemy.dialects.postgresql import insert
 from fastapi.middleware.cors import CORSMiddleware
 from datetime import datetime
 from app.database import get_db, Base, engine
@@ -28,10 +27,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-# Load the original JSON file
-# with open("mappings/reversedItems.json", "r", encoding="utf-8") as file:
-    # ITEM_NAMES = json.load(file)
 
 @app.on_event("startup")
 async def create_tables():
