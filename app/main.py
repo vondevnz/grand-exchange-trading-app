@@ -3,11 +3,13 @@ import os
 import json
 from fastapi import FastAPI, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
 from fastapi.middleware.cors import CORSMiddleware
 from datetime import datetime
-from database import get_db
+from app.database import get_db, Base, engine
+from app.models import Items
 
-from schemas import ItemsSchema, ItemTimeStampsSchema
+from app.schemas import ItemsSchema, ItemTimeStampsSchema
 
 load_dotenv()
 USER_AGENT = os.getenv("USER_AGENT_TEXT")
@@ -50,6 +52,13 @@ dummy_items = [
 # Load the original JSON file
 # with open("mappings/reversedItems.json", "r", encoding="utf-8") as file:
     # ITEM_NAMES = json.load(file)
+
+@app.on_event("startup")
+async def create_tables():
+    # Create all database tables defined in models if they don't exist
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+    print("✅ Database tables successfully created")
 
 
 @app.get("/api/prices/latest", response_model=list[ItemsSchema])
