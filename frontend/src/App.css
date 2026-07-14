@@ -112,3 +112,31 @@ body {
   display: block;
   border-radius: 4px;
 }
+
+.ge-search-row {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 1rem;
+}
+
+.ge-search {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font-size: 0.85rem;
+  padding: 0.55rem 0.9rem;
+  width: 260px;
+  max-width: 100%;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.ge-search::placeholder {
+  color: var(--text-muted);
+}
+
+.ge-search:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(75, 139, 245, 0.15);
+}

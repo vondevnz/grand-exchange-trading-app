@@ -37,8 +37,10 @@ async def create_tables():
 
 
 @app.get("/api/prices/latest", response_model=list[ItemsSchema])
-async def get_latest_prices(db: AsyncSession = Depends(get_db)):
+async def get_latest_prices(search: str | None = None, db: AsyncSession = Depends(get_db)):
     stmt = select(Items)
+    if search:
+        stmt = stmt.where(Items.name.ilike(f"%{search}%"))
     result = await db.execute(stmt)
     return result.scalars().all()
 
