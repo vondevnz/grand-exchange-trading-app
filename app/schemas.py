@@ -26,3 +26,13 @@ class ItemTimeStampsSchema(BaseModel):
 	high_price_volume: Optional[int]
 	low_price_volume: Optional[int]
 	item_id: int
+
+class PaginatedItemsResponse(BaseModel):
+
+	model_config = ConfigDict(from_attributes=True)
+
+	items: list[ItemsSchema]
+	total: int
+	page: int
+	page_size: int
+	total_pages: int

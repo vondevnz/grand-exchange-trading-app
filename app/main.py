@@ -1,15 +1,16 @@
 from dotenv import load_dotenv
 import os
 import json
+import math
 from fastapi import FastAPI, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from sqlalchemy import select, func
 from fastapi.middleware.cors import CORSMiddleware
 from datetime import datetime
 from app.database import get_db, Base, engine
 from app.models import Items
 
-from app.schemas import ItemsSchema, ItemTimeStampsSchema
+from app.schemas import ItemsSchema, ItemTimeStampsSchema, PaginatedItemsResponse
 
 load_dotenv()
 USER_AGENT = os.getenv("USER_AGENT_TEXT")
@@ -35,14 +36,28 @@ async def create_tables():
         await conn.run_sync(Base.metadata.create_all)
     print("Database tables successfully created")
 
+@app.get("/api/prices/latest", response_model=PaginatedItemsResponse)
+async def get_latest_prices(page: int = 1, page_size: int = 20, search: str | None = None, db: AsyncSession = Depends(get_db)):
 
-@app.get("/api/prices/latest", response_model=list[ItemsSchema])
-async def get_latest_prices(search: str | None = None, db: AsyncSession = Depends(get_db)):
-    stmt = select(Items)
+    stmt = select(Items).limit(page_size).offset((page- 1) * page_size)
     if search:
         stmt = stmt.where(Items.name.ilike(f"%{search}%"))
+
+    # Number of items
+    count_stmt = select(func.count()).select_from(Items)
+    if search:
+        count_stmt = count_stmt.where(Items.name.ilike(f"%{search}%"))
+
     result = await db.execute(stmt)
-    return result.scalars().all()
+    count = await db.execute(count_stmt)
+    count_result = count.scalar()
+    return {
+        "items": result.scalars().all(),
+        "total": count_result,
+        "page": page,
+        "page_size": page_size,
+        "total_pages": math.ceil(count_result / page_size)
+    }
 
 @app.get("/api/prices/latest/{item_id}", response_model=ItemsSchema)
 def get_item(item_id: int):
