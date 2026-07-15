@@ -101,8 +101,8 @@ function App() {
                     </td>
                     <td className="ge-price">{item.instabuy}</td>
                     <td className="ge-price">{item.instasell}</td>
-                    <td className="ge-time">{item.last_instabuy_time}</td>
-                    <td className="ge-time">{item.last_instasell_time}</td>
+                    <td className="ge-time">{timeAgo(item.last_instabuy_time)}</td>
+                    <td className="ge-time">{timeAgo(item.last_instasell_time)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -118,6 +118,27 @@ function App() {
       )}
     </div>
   );
+}
+
+function timeAgo(isoString) {
+  const then = new Date(isoString);
+  const now = new Date();
+  const diffSeconds = Math.floor((now - then) / 1000);
+
+  if (diffSeconds < 60) return "just now";
+
+  const diffMinutes = Math.floor(diffSeconds / 60);
+  if (diffMinutes < 60) {
+    return `${diffMinutes} min${diffMinutes === 1 ? "" : "s"} ago`;
+  }
+
+  const diffHours = Math.floor(diffMinutes / 60);
+  if (diffHours < 24) {
+    return `${diffHours} hour${diffHours === 1 ? "" : "s"} ago`;
+  }
+
+  const diffDays = Math.floor(diffHours / 24);
+  return `${diffDays} day${diffDays === 1 ? "" : "s"} ago`;
 }
 
 function Pagination({ page, totalPages, onPageChange }) {
