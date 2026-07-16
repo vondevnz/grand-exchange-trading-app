@@ -9,8 +9,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from datetime import datetime
 from app.database import get_db, Base, engine
 from app.models import Items
+from app.scripts.pollingData import pollData
 
 from app.schemas import ItemsSchema, ItemTimeStampsSchema, PaginatedItemsResponse
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 load_dotenv()
 USER_AGENT = os.getenv("USER_AGENT_TEXT")
@@ -34,7 +36,14 @@ async def create_tables():
     # Create all database tables defined in models if they don't exist
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+
     print("Database tables successfully created")
+
+    await pollData()
+
+    scheduler = AsyncIOScheduler()
+    scheduler.add_job(pollData, 'interval', seconds=60)
+    scheduler.start()
 
 @app.get("/api/prices/latest", response_model=PaginatedItemsResponse)
 async def get_latest_prices(page: int = 1, page_size: int = 20, search: str | None = None, db: AsyncSession = Depends(get_db)):
