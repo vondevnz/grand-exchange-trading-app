@@ -26,7 +26,10 @@ app = FastAPI(
 # Allow your React dev server to call this API
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],  # Vite's default dev port
+    allow_origins=[
+        "http://localhost:5173", # Vite's default dev port
+        "https://grand-exchange-trading-app.vercel.app/"
+    ],  
     allow_methods=["*"],
     allow_headers=["*"],
 )
