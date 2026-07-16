@@ -9,6 +9,8 @@ function App() {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
 
+  const API_URL = import.meta.env.VITE_API_URL;
+
   useEffect(() => {
 
     const timeoutId = setTimeout(() => {
@@ -19,7 +21,7 @@ function App() {
       });
       if (searchTerm) params.set("search", searchTerm);
 
-      fetch(`http://localhost:8000/api/prices/latest?${params.toString()}`)
+      fetch(`${API_URL}/api/prices/latest?${params.toString()}`)
         .then((res) => res.json())
         .then((json) => setData(json))
         .catch((err) => setError(err.message));
