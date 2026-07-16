@@ -8,7 +8,7 @@ React frontend provides searchable, paginated access to it.
 ## Features
 
 - **Live price ingestion** — a scheduled background job polls the OSRS Wiki
-  API every 60 seconds and upserts current buy/sell prices for all ~4,450
+  API every 10 minutes and upserts current buy/sell prices for all ~4,450
   tradeable items
 - **Search** — case-insensitive, partial-match search by item name, handled
   server-side via SQL `ILIKE`
@@ -18,6 +18,17 @@ React frontend provides searchable, paginated access to it.
   last trade times
 - **Fully containerised** — one command (`docker-compose up`) brings up the
   API, database, and background poller together
+
+## Currently Working On
+
+- **Batch Inserts** - Currently takes 5 minutes for each insert into database, will optimise this to fix congestion issues
+
+## Future Features
+
+- Historical price charts (a time-series table exists in the schema but
+  isn't yet populated or exposed via the API)
+- Live UI updates — the frontend reflects data as of the last page load,
+  not the last poll (a manual refresh shows current data)
 
 ## Screenshot
 
@@ -176,13 +187,6 @@ for a small number of items (missing price data, missing icon mappings,
 missing name mappings). Rather than allowing these to crash the ingestion
 job, affected items are skipped for that polling cycle rather than inserted
 with invalid or partial data.
-
-## Not yet implemented
-
-- Historical price charts (a time-series table exists in the schema but
-  isn't yet populated or exposed via the API)
-- No live UI updates — the frontend reflects data as of the last page load,
-  not the last poll (a manual refresh shows current data)
 
 ## License
 

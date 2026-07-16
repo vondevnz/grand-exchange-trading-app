@@ -1,12 +1,17 @@
+import ssl
+import os
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker, declarative_base
 
 # Connection URL
-DATABASE_URL = "postgresql+asyncpg://user:password@db:5432/items_db"
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+ssl_context = ssl.create_default_context()
 
 engine = create_async_engine(
 	DATABASE_URL,
-	echo = True
+	echo = True,
+	connect_args={"ssl": ssl_context},
 )
 
 # Create session factory

@@ -42,7 +42,7 @@ async def create_tables():
     await pollData()
 
     scheduler = AsyncIOScheduler()
-    scheduler.add_job(pollData, 'interval', seconds=60)
+    scheduler.add_job(pollData, 'interval', minutes=10)
     scheduler.start()
 
 @app.get("/api/prices/latest", response_model=PaginatedItemsResponse)
