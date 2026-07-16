@@ -28,7 +28,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:5173", # Vite's default dev port
-        "https://grand-exchange-trading-app.vercel.app/"
+        "https://grand-exchange-trading-app.vercel.app",
     ],  
     allow_methods=["*"],
     allow_headers=["*"],
