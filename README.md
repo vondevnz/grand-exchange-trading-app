@@ -10,7 +10,7 @@ API: https://grand-exchange-trading-app.onrender.com/docs
 
 
 > Note: the backend runs on a free-tier instance. A keep-alive job pings it
-> every 14 minutes to prevent it from spinning down, but an occasional slow
+> every 10 minutes to prevent it from spinning down, but an occasional slow
 > first load is still possible.
 
 ## Features
@@ -34,9 +34,12 @@ API: https://grand-exchange-trading-app.onrender.com/docs
 ## Future Features
 
 - Historical price charts (a time-series table exists in the schema but
-  isn't yet populated or exposed via the API)
+  isn't yet populated or exposed via the API)  
 - Live UI updates — the frontend reflects data as of the last page load,
-  not the last poll (a manual refresh shows current data)
+  not the last poll (a manual refresh shows current data)  
+- Filtering system for each column
+- User login to favourite items to trade
+- Data models to find an edge in the market for profit gains
 
 ## Screenshot
 
@@ -226,7 +229,3 @@ for a small number of items (missing price data, missing icon mappings,
 missing name mappings). Rather than allowing these to crash the ingestion
 job, affected items are skipped for that polling cycle rather than inserted
 with invalid or partial data.
-
-## License
-
-MIT
