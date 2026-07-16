@@ -5,6 +5,14 @@ Exchange, built on the OSRS Wiki's real-time pricing API. A scheduled
 background job continuously ingests live price data into PostgreSQL, and a
 React frontend provides searchable, paginated access to it.
 
+Live app: https://grand-exchange-trading-app.vercel.app   
+API: https://grand-exchange-trading-app.onrender.com/docs   
+
+
+> Note: the backend runs on a free-tier instance. A keep-alive job pings it
+> every 14 minutes to prevent it from spinning down, but an occasional slow
+> first load is still possible.
+
 ## Features
 
 - **Live price ingestion** — a scheduled background job polls the OSRS Wiki
@@ -45,10 +53,11 @@ React frontend provides searchable, paginated access to it.
       |  /latest    /mapping     |
       +-------------+------------+
                     |
-                    | polled every 60s (APScheduler)
+                    | polled every 10 min (APScheduler)
                     v
       +--------------------------+
       |   FastAPI Application    |
+      |   (deployed on Render)   |
       |                          |
       |  Scheduled ingestion job |
       |  - fetch latest prices   |
@@ -61,10 +70,11 @@ React frontend provides searchable, paginated access to it.
       |    (search, pagination)  |
       +-------------+------------+
                     |
-                    | SQLAlchemy (async) / asyncpg
+                    | SQLAlchemy (async) / asyncpg, SSL
                     v
       +--------------------------+
       |      PostgreSQL          |
+      |    (hosted on Neon)      |
       |  items                   |
       |  item_time_stamp         |
       +--------------------------+
@@ -73,6 +83,7 @@ React frontend provides searchable, paginated access to it.
                     |
       +--------------------------+
       |   React (Vite) Frontend  |
+      |   (deployed on Vercel)   |
       |  - searchable, paginated |
       |    item table            |
       +--------------------------+
@@ -84,23 +95,30 @@ React frontend provides searchable, paginated access to it.
 |---|---|
 | Backend | Python 3.11, FastAPI, Uvicorn |
 | ORM | SQLAlchemy 2.0 (async), asyncpg |
-| Database | PostgreSQL 15 |
+| Database | PostgreSQL 15 (hosted on [Neon](https://neon.tech)) |
 | Scheduling | APScheduler (`AsyncIOScheduler`) |
 | Frontend | React, Vite |
 | Dependency management | uv |
 | Containerisation | Docker, Docker Compose |
+| Hosting — backend | [Render](https://render.com) (Docker web service) |
+| Hosting — frontend | [Vercel](https://vercel.com) |
+| Uptime | GitHub Actions scheduled workflow (keep-alive ping) |
 
 ## Getting started
-
+ 
 ### Prerequisites
-
+ 
 - Docker Desktop
 - Node.js (for running the frontend dev server)
 - A `.env` file (see below) — the app won't start without one, since the
   OSRS Wiki API requires a descriptive `User-Agent` on every request
-
+By default, `docker-compose.yml` runs a local PostgreSQL container — no
+external database account is required to run this locally. The deployed
+version instead points `DATABASE_URL` at a hosted [Neon](https://neon.tech)
+Postgres instance; see [Deployment](#deployment) below.
+ 
 ### Backend
-
+ 
 ```bash
 git clone https://github.com/vondevnz/grand-exchange-trading-app.git
 cd grand-exchange-trading-app
@@ -108,44 +126,65 @@ cp .env.example .env
 # edit .env and set USER_AGENT_TEXT to identify your own instance
 docker-compose up --build
 ```
-
+ 
 This starts:
 - a PostgreSQL container (`db`)
 - the FastAPI app (`app`) on `http://localhost:8000`
-
 On startup, the app creates any missing database tables and starts the
 scheduled polling job automatically — no manual data-loading step required.
 Prices begin populating within the first polling interval.
-
+ 
 Interactive API docs are available at `http://localhost:8000/docs`.
-
+ 
 ### Frontend
-
+ 
 ```bash
 cd frontend
+cp .env.example .env
+# edit .env if needed — VITE_API_URL defaults to the local backend
 npm install
 npm run dev
 ```
-
+ 
 Runs on `http://localhost:5173` by default (Vite's dev server), and talks to
-the backend at `http://localhost:8000`.
-
+the backend URL configured in `VITE_API_URL`.
+ 
+## Deployment
+ 
+The live version is split across three free-tier services:
+ 
+| Service | Role |
+|---|---|
+| [Neon](https://neon.tech) | Managed PostgreSQL — chosen over Render's own free Postgres, which is hard-deleted 30 days after creation |
+| [Render](https://render.com) | Hosts the FastAPI backend as a Docker web service, built directly from this repo |
+| [Vercel](https://vercel.com) | Hosts the React frontend, built from the `frontend/` subdirectory |
+ 
+**Environment variables** are set directly in each platform's dashboard
+(Render and Vercel), rather than committed — the same variables used
+locally (`DATABASE_URL`, `USER_AGENT_TEXT` on the backend; `VITE_API_URL`
+on the frontend), pointed at the production database and API instead.
+ 
+**Keep-alive.** Render's free web services spin down after 15 minutes of
+inactivity, causing a 30–60 second cold start on the next request. A
+scheduled GitHub Actions workflow (`.github/workflows/keep-alive.yml`)
+pings the API every 14 minutes to keep it warm.
+ 
 ## API
-
+ 
 ### `GET /api/prices/latest`
-
+ 
 Returns a paginated, optionally filtered list of items with current prices.
-
+ 
 **Query parameters**
-
+ 
 | Param | Type | Default | Description |
 |---|---|---|---|
 | `page` | int | `1` | Page number |
 | `page_size` | int | `20` | Items per page (20 / 50 / 100) |
 | `search` | string | — | Case-insensitive partial match on item name |
-
+ 
 **Example response**
-
+ 
 ```json
 {
   "items": [
