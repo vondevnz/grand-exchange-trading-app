@@ -105,7 +105,7 @@ API: https://grand-exchange-trading-app.onrender.com/docs
 | Containerisation | Docker, Docker Compose |
 | Hosting — backend | [Render](https://render.com) (Docker web service) |
 | Hosting — frontend | [Vercel](https://vercel.com) |
-| Uptime | GitHub Actions scheduled workflow (keep-alive ping) |
+| Uptime | cron-job.org (keep-alive ping) |
 
 ## Getting started
  
@@ -169,8 +169,7 @@ on the frontend), pointed at the production database and API instead.
  
 **Keep-alive.** Render's free web services spin down after 15 minutes of
 inactivity, causing a 30–60 second cold start on the next request. A
-scheduled GitHub Actions workflow (`.github/workflows/keep-alive.yml`)
-pings the API every 14 minutes to keep it warm.
+scheduled cron-job pings the API every 10 minutes to keep it warm.
  
 ## API
  
