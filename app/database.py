@@ -6,12 +6,14 @@ from sqlalchemy.orm import sessionmaker, declarative_base
 # Connection URL
 DATABASE_URL = os.getenv("DATABASE_URL")
 
-ssl_context = ssl.create_default_context()
+connect_args = {}
+if "neon.tech" in DATABASE_URL:
+	connect_args["ssl"] = ssl.create_default_context()
 
 engine = create_async_engine(
 	DATABASE_URL,
 	echo = True,
-	connect_args={"ssl": ssl_context},
+	connect_args=connect_args,
 )
 
 # Create session factory
