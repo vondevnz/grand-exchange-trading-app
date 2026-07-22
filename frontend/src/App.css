@@ -284,3 +284,36 @@ body {
   padding: 1rem 0;
   text-align: center;
 }
+
+.ge-chart-header {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 0.5rem;
+}
+
+.ge-timestep-selector {
+  display: flex;
+  gap: 0.3rem;
+}
+
+.ge-timestep-selector button {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  padding: 0.3rem 0.6rem;
+  cursor: pointer;
+  transition: background 0.12s ease, border-color 0.12s ease, color 0.12s ease;
+}
+
+.ge-timestep-selector button:hover {
+  border-color: var(--accent);
+  color: var(--text);
+}
+
+.ge-timestep-selector .ge-timestep-active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}

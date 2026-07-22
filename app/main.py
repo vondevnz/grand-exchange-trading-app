@@ -11,6 +11,7 @@ from app.database import get_db, Base, engine
 from app.models import Items
 from app.scripts.pollingData import pollData
 from app.fetch import import_latest
+from typing import Literal
 
 from app.schemas import ItemsSchema, ItemTimeStampsSchema, PaginatedItemsResponse
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
@@ -79,24 +80,11 @@ def get_item(item_id: int):
             return item
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Item not found")
 
-
-'''
-{
-  "data": [
-    {
-      "timestamp": 1784265000,
-      "avgHighPrice": 1030000,
-      "avgLowPrice": 996335,
-      "highPriceVolume": 1,
-      "lowPriceVolume": 7
-    },
-'''
-
 # Get price history data from osrs wiki
 @app.get("/api/prices/history/{item_id}")
-def get_price_history(item_id: int):
+def get_price_history(item_id: int, timestep: Literal["5m", "1h", "6h", "24h"] = "1h"):
 
-    url = f"https://prices.runescape.wiki/api/v1/osrs/timeseries?timestep=5m&id={item_id}"
+    url = f"https://prices.runescape.wiki/api/v1/osrs/timeseries?timestep={timestep}&id={item_id}"
     result = import_latest(url)["data"]
 
     if result:

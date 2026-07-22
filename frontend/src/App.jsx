@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { PriceHistoryChart } from './components/Chart.jsx';
+import { TimestepSelector } from './components/TimestepSelector.jsx'
 import React from 'react';
 import "./App.css";
 
@@ -15,6 +16,7 @@ function App() {
   const [selectedItem, setSelectedItem] = useState(null); // whole item object, or null
   const [history, setHistory] = useState(null);
   const [historyLoading, setHistoryLoading] = useState(false);
+  const [timestep, setTimestep] = useState("1h");
 
   const API_URL = import.meta.env.VITE_API_URL;
 
@@ -48,12 +50,12 @@ function App() {
     setHistoryLoading(true);
     setHistory(null);
 
-    fetch(`${API_URL}/api/prices/history/${selectedItem.item_id}`)
+    fetch(`${API_URL}/api/prices/history/${selectedItem.item_id}?timestep=${timestep}`)
       .then((res) => res.json())
       .then((data) => setHistory(data))
       .catch((err) => setError(err.message))
       .finally(() => setHistoryLoading(false));
-  }, [selectedItem]);
+  }, [selectedItem, timestep]);
 
   if (error) return <div>Error: {error}</div>;
 
@@ -132,6 +134,9 @@ function App() {
                       {isExpanded && (
                         <tr className="ge-expanded-row">
                           <td colSpan={8}>
+                            <div className="ge-chart-header">
+                              <TimestepSelector value={timestep} onChange={setTimestep} />
+                            </div>
                             <PriceHistoryChart history={history} loading={historyLoading} />
                           </td>
                         </tr>
