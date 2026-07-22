@@ -10,6 +10,8 @@ from datetime import datetime
 from app.database import get_db, Base, engine
 from app.models import Items
 from app.scripts.pollingData import pollData
+from app.fetch import import_latest
+from typing import Literal
 
 from app.schemas import ItemsSchema, ItemTimeStampsSchema, PaginatedItemsResponse
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
@@ -76,4 +78,15 @@ def get_item(item_id: int):
     for item in dummy_items:
         if item.get("item_id") == item_id:
             return item
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Item not found")
+
+# Get price history data from osrs wiki
+@app.get("/api/prices/history/{item_id}")
+def get_price_history(item_id: int, timestep: Literal["5m", "1h", "6h", "24h"] = "1h"):
+
+    url = f"https://prices.runescape.wiki/api/v1/osrs/timeseries?timestep={timestep}&id={item_id}"
+    result = import_latest(url)["data"]
+
+    if result:
+        return result
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Item not found")

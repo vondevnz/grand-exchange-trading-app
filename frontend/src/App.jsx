@@ -1,5 +1,8 @@
 import { useState, useEffect } from "react";
-import "./App.css"
+import { PriceHistoryChart } from './components/Chart.jsx';
+import { TimestepSelector } from './components/TimestepSelector.jsx'
+import React from 'react';
+import "./App.css";
 
 function App() {
   // data holds { items, total, page, page_size, total_pages }
@@ -8,6 +11,12 @@ function App() {
   const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
+
+  // Table charts
+  const [selectedItem, setSelectedItem] = useState(null); // whole item object, or null
+  const [history, setHistory] = useState(null);
+  const [historyLoading, setHistoryLoading] = useState(false);
+  const [timestep, setTimestep] = useState("1h");
 
   const API_URL = import.meta.env.VITE_API_URL;
 
@@ -34,6 +43,19 @@ function App() {
   useEffect(() => {
     setPage(1);
   }, [searchTerm, pageSize]);
+
+  useEffect(() => {
+    if (!selectedItem) return;
+
+    setHistoryLoading(true);
+    setHistory(null);
+
+    fetch(`${API_URL}/api/prices/history/${selectedItem.item_id}?timestep=${timestep}`)
+      .then((res) => res.json())
+      .then((data) => setHistory(data))
+      .catch((err) => setError(err.message))
+      .finally(() => setHistoryLoading(false));
+  }, [selectedItem, timestep]);
 
   if (error) return <div>Error: {error}</div>;
 
@@ -78,6 +100,7 @@ function App() {
             <table className="ge-table">
               <thead>
                 <tr>
+                  <th></th>
                   <th>ID</th>
                   <th>Name</th>
                   <th>Img</th>
@@ -88,25 +111,39 @@ function App() {
                 </tr>
               </thead>
               <tbody>
-                {data.items.map((item) => (
-                  <tr key={item.item_id}>
-                    <td>{item.item_id}</td>
-                    <td className="ge-name">{item.name}</td>
-                    <td>
-                      <img
-                        className="ge-item-img"
-                        src={item.item_image}
-                        alt={item.name}
-                        width="24"
-                        height="24"
-                      />
-                    </td>
-                    <td className="ge-price">{item.instabuy}</td>
-                    <td className="ge-price">{item.instasell}</td>
-                    <td className="ge-time">{timeAgo(item.last_instabuy_time)}</td>
-                    <td className="ge-time">{timeAgo(item.last_instasell_time)}</td>
-                  </tr>
-                ))}
+                {data.items.map((item) => {
+                  const isExpanded = selectedItem?.item_id === item.item_id;
+
+                  return (
+                    <React.Fragment key={item.item_id}>
+                      <tr className="ge-row-clickable" onClick={() => setSelectedItem(isExpanded ? null : item)}>
+                        <td className="ge-expand-arrow">
+                          <span className={isExpanded ? "ge-arrow ge-arrow-open" : "ge-arrow"}>▶</span>
+                        </td>
+                        <td>{item.item_id}</td>
+                        <td className="ge-name">{item.name}</td>
+                        <td>
+                          <img className="ge-item-img" src={item.item_image} alt={item.name} width="24" height="24" />
+                        </td>
+                        <td className="ge-price">{item.instabuy}</td>
+                        <td className="ge-price">{item.instasell}</td>
+                        <td className="ge-time">{timeAgo(item.last_instabuy_time)}</td>
+                        <td className="ge-time">{timeAgo(item.last_instasell_time)}</td>
+                      </tr>
+
+                      {isExpanded && (
+                        <tr className="ge-expanded-row">
+                          <td colSpan={8}>
+                            <div className="ge-chart-header">
+                              <TimestepSelector value={timestep} onChange={setTimestep} />
+                            </div>
+                            <PriceHistoryChart history={history} loading={historyLoading} />
+                          </td>
+                        </tr>
+                      )}
+                    </React.Fragment>
+                  );
+                })}
               </tbody>
             </table>
           </div>

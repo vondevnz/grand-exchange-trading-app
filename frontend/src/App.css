@@ -205,3 +205,115 @@ body {
   color: var(--text-muted);
   padding: 0 0.2rem;
 }
+
+.ge-row-clickable {
+  cursor: pointer;
+}
+
+.ge-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+}
+
+.ge-modal {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.25rem 1.5rem;
+  width: 90%;
+  max-width: 600px;
+}
+
+.ge-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.ge-modal-header h1,
+.ge-modal-header h2 {
+  color: var(--text);
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.ge-modal-close {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1.4rem;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.ge-modal-close:hover {
+  color: var(--text);
+}
+
+.ge-expand-arrow {
+  width: 28px;
+  text-align: center;
+}
+
+.ge-arrow {
+  display: inline-block;
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  transition: transform 0.15s ease;
+}
+
+.ge-arrow-open {
+  transform: rotate(90deg);
+  color: var(--accent);
+}
+
+.ge-expanded-row td {
+  background: var(--surface-alt);
+  padding: 1rem;
+}
+
+.ge-chart-status {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  padding: 1rem 0;
+  text-align: center;
+}
+
+.ge-chart-header {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 0.5rem;
+}
+
+.ge-timestep-selector {
+  display: flex;
+  gap: 0.3rem;
+}
+
+.ge-timestep-selector button {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  padding: 0.3rem 0.6rem;
+  cursor: pointer;
+  transition: background 0.12s ease, border-color 0.12s ease, color 0.12s ease;
+}
+
+.ge-timestep-selector button:hover {
+  border-color: var(--accent);
+  color: var(--text);
+}
+
+.ge-timestep-selector .ge-timestep-active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
