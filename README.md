@@ -26,6 +26,8 @@ API: https://grand-exchange-trading-app.onrender.com/docs
   last trade times
 - **Fully containerised** — one command (`docker-compose up`) brings up the
   API, database, and background poller together
+- **Historical price charts** - Each item has historical data and volume data
+  a graph dropdown menu
 
 ## Currently Working On
 
@@ -33,8 +35,7 @@ API: https://grand-exchange-trading-app.onrender.com/docs
 
 ## Future Features
 
-- Historical price charts (a time-series table exists in the schema but
-  isn't yet populated or exposed via the API)  
+ 
 - Live UI updates — the frontend reflects data as of the last page load,
   not the last poll (a manual refresh shows current data)  
 - Filtering system for each column
@@ -43,7 +44,7 @@ API: https://grand-exchange-trading-app.onrender.com/docs
 
 ## Screenshot
 
-![Grand Exchange Trading Application screenshot](docs/app-screenshot.png)
+![Grand Exchange Trading Application screenshot](docs/app-screenshot-2.png)
 
 ## Architecture
 
